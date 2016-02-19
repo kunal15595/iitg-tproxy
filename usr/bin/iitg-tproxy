@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# execute with privileges only
+if [ $EUID != 0 ]; then
+    sudo bash "$0" "$@"
+    exit $?
+fi
+
+for i in "$@"
+do
+    case $i in
+        -c|--config)
+            echo -n "Proxy server : "
+            read proxy_server
+            if [[ $proxy_server =~ ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$ ]]
+            then
+                sudo sed -i s/tproxy_server=.*/tproxy_server=$proxy_server/g /etc/iitg-tproxy/config/config.sh
+            else
+                echo "invalid proxy server address"
+                echo $proxy_server
+                exit -1
+            fi
+
+    		echo -n "Proxy port : "
+            read proxy_port
+            if [[ $proxy_port =~ ^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$ ]]
+            then
+                sudo sed -i s/tproxy_port=.*/tproxy_port=$proxy_port/g /etc/iitg-tproxy/config/config.sh
+            else
+                echo "invalid proxy server address"
+                exit -1
+            fi
+
+    		echo -n "Proxy username : "
+            read proxy_username
+            sudo sed -i s/tproxy_username=.*/tproxy_username=$proxy_username/g /etc/iitg-tproxy/config/config.sh
+
+    		echo -n "Proxy password : "
+            read -s proxy_password
+            sudo sed -i s/tproxy_password=.*/tproxy_password=$proxy_password/g /etc/iitg-tproxy/config/config.sh
+
+        ;;
+        -h|--help)
+
+        ;;
+        start)
+            sudo bash /etc/iitg-tproxy/src/bash/start.sh >> /dev/null 2>&1
+
+        ;;
+        status)
+            if [ -f /etc/iitg-tproxy/log/pid ]
+            then
+                if ps -p $(cat /etc/iitg-tproxy/log/pid) > /dev/null
+                then
+                    echo "running"
+                else
+                    sudo bash /etc/iitg-tproxy/src/bash/stop.sh >> /dev/null 2>&1
+                    echo "not running"
+                fi
+            else
+                echo "not running"
+            fi
+
+        ;;
+        stop)
+            sudo bash /etc/iitg-tproxy/src/bash/stop.sh >> /dev/null 2>&1
+        ;;
+        --default)
+        DEFAULT=YES
+        ;;
+        *)
+        # unknown option
+        ;;
+    esac
+done

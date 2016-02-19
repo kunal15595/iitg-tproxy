@@ -1,0 +1,9 @@
+Package: iitg-tproxy
+Version: 0.1
+Architecture: amd64
+Maintainer: Kunal Khandelwal <kunal15595@gmail.com>
+Installed-Size: 82
+Section: net
+Priority: optional
+Description: Transparent proxy in debian
+ Get net working without the requirement of a per-app proxy setting.
