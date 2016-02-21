@@ -8,6 +8,6 @@ X-Python-Version: >= 2.6
 
 Package: iitg-tproxy
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, redsocks
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${redsocks:Depends}
 Description: Transparent proxy in debian
  Get net working without the requirement of a per-app proxy setting.
