@@ -6,7 +6,7 @@ if [ $EUID != 0 ]; then
     exit $?
 fi
 
-if [[ "$#" -eq 1 ]]; then
+if [[ "$#" -eq 0 ]]; then
     printf " Usage : \n\t iitg-tproxy [--config] start/stop/restart/status \n"
     exit 0
 fi
