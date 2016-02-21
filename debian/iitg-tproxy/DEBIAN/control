@@ -3,6 +3,7 @@ Version: 0.1
 Architecture: amd64
 Maintainer: Kunal Khandelwal <kunal15595@gmail.com>
 Installed-Size: 82
+Depends: redsocks
 Section: net
 Priority: optional
 Description: Transparent proxy in debian
