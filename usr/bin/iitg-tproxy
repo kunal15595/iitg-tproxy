@@ -38,10 +38,10 @@ do
     		echo -n "Proxy password : "
             read -s proxy_password
             sudo sed -i s/tproxy_password=.*/tproxy_password=$proxy_password/g /etc/iitg-tproxy/config/config.sh
-
+            echo ""
         ;;
         -h|--help)
-            echo " Usage : \n\t iitg-tproxy [--config] start/stop/restart/status"
+            printf " Usage : \n\t iitg-tproxy [--config] start/stop/restart/status"
             exit 0
         ;;
         restart)
