@@ -41,11 +41,17 @@ do
 
         ;;
         -h|--help)
-
+            echo " Usage : \n\t iitg-tproxy [--config] start/stop/restart/status"
+            exit 0
+        ;;
+        restart)
+            sudo bash /etc/iitg-tproxy/src/bash/stop.sh >> /dev/null 2>&1
+            sudo bash /etc/iitg-tproxy/src/bash/start.sh >> /dev/null 2>&1
+            exit 0
         ;;
         start)
             sudo bash /etc/iitg-tproxy/src/bash/start.sh >> /dev/null 2>&1
-
+            exit 0
         ;;
         status)
             if [ -f /etc/iitg-tproxy/log/pid ]
@@ -60,16 +66,15 @@ do
             else
                 echo "not running"
             fi
-
+            exit 0
         ;;
         stop)
             sudo bash /etc/iitg-tproxy/src/bash/stop.sh >> /dev/null 2>&1
-        ;;
-        --default)
-        DEFAULT=YES
+            exit 0
         ;;
         *)
-        # unknown option
+            echo "unknown option"
+            exit 0
         ;;
     esac
 done
