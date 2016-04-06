@@ -7,6 +7,10 @@ import signal
 import os
 import sys
 import json
+from pprint import pprint
+import sys
+import traceback
+import atexit
 
 defaultIP = '8.8.8.8'
 
@@ -43,25 +47,37 @@ def respuesta(query):
 		if len(query.dominio.split('.')) < 2:
 			return
 		query.dominio = query.dominio.replace('_', '')
-		if query.dominio.lower()[-11:] == 'dns-api.org':
-			query.ip = '80.68.84.120'
+		if query.dominio.lower()[-10:] == 'dotnul.com':
+			# print "dotnul requested"
+			query.ip = '80.92.90.248'
 			stat = 0
 		else:
 			try:
-				# print query.dominio
+				print query.dominio
+				# http://dotnul.com/api/dns/dotnul.com/A
+				# dnsConn = httplib.HTTPSConnection('dns-api.org', timeout=15)
+				dnsConn = httplib.HTTPConnection('80.92.90.248', timeout=15)
 
-				dnsConn = httplib.HTTPSConnection('dns-api.org', timeout=15)
-				dnsConn.request("GET", "/A/" + query.dominio)
+				dnsConn.request("GET", "/api/dns/8.8.8.8/IN/" + query.dominio + "/A")
 
 				dnsRes = dnsConn.getresponse()
 				jsonRes = json.loads(dnsRes.read())
-				query.ip = jsonRes[0]['value']
+
+				idx = 0
+				answers = jsonRes['dig']['answer']
+				query.ip = ""
+				while not re.match('[0-9]+\.[0-9]+\.[0-9]+\.[0-9]', query.ip):
+					query.ip = answers[idx]['rdata']
+					idx = idx + 1
+
+				# print "ip", query.ip
 
 				if dnsRes.status == 200:
 					stat = 1
 				else:
 					pass
 			except:
+				# traceback.print_exc()
 				print '{:5s}  {:25s} {:15s}'.format('Exc', str(query.ip), str(query.dominio))
 				return
 
@@ -91,7 +107,7 @@ def respuesta(query):
 	if stat == 1:
 		print '{:5s}  {:15s} {:15s}'.format(str(dnsRes.status), str(query.ip), str(query.dominio))
 		pass
-	elif stat == 2 and not query.dominio == 'dns-api.org':
+	elif stat == 2 and not query.dominio == 'dotnul.com':
 		print '{:5s}  {:20s} {:15s}'.format('Hit', str(query.ip), str(query.dominio))
 		pass
 
