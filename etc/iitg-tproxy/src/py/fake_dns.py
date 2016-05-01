@@ -44,10 +44,19 @@ def respuesta(query):
 	if dnsCache.__contains__(query.dominio):
 		query.ip = dnsCache[query.dominio]
 	else:
+		query.dominio = query.dominio.replace('_', '')
+		
 		if len(query.dominio.split('.')) < 2:
 			return
-		query.dominio = query.dominio.replace('_', '')
-		if query.dominio.lower()[-10:] == 'dotnul.com':
+		elif query.dominio.lower().startswith('http.tcp.'):
+			query.dominio = query.dominio[10:]
+		elif query.dominio.lower().startswith('https.tcp.'):
+			query.dominio = query.dominio[11:]
+
+		if re.match('[0-9]+\.[0-9]+\.[0-9]+\.[0-9]', query.dominio):
+			query.ip = query.dominio
+			stat = 0
+		elif query.dominio.lower()[-10:] == 'dotnul.com':
 			# print "dotnul requested"
 			query.ip = '80.92.90.248'
 			stat = 0

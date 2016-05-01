@@ -8,8 +8,11 @@ start)
 
 	# refer iptables manual for information on PREROUTING and OUTPUT chains
 
-        # create new table redsocks
-        sudo iptables -t nat -N REDSOCKS
+	# create new table redsocks
+	sudo iptables -t nat -N REDSOCKS
+
+	# redirect UDP port 53 to 7613(port of fake DNS)
+	sudo iptables -t nat -A REDSOCKS -p udp --dport 53 -j REDIRECT --to 7613
 
 	sudo iptables -t nat -A REDSOCKS -d 0.0.0.0/8 -j RETURN
 	sudo iptables -t nat -A REDSOCKS -d 10.0.0.0/8 -j RETURN
@@ -20,9 +23,6 @@ start)
 	sudo iptables -t nat -A REDSOCKS -d 202.141.80.0/23 -j RETURN
 	sudo iptables -t nat -A REDSOCKS -d 224.0.0.0/4 -j RETURN
 	sudo iptables -t nat -A REDSOCKS -d 240.0.0.0/4 -j RETURN
-
-	# redirect UDP port 53 to 7613(port of fake DNS)
-	sudo iptables -t nat -A REDSOCKS -p udp --dport 53 -j REDIRECT --to 7613
 
 	# redirect TCP port 80 to 8123(http-relay) and others to 8124(http-connect)
 	sudo iptables -t nat -A REDSOCKS -p tcp --dport 80 -j REDIRECT --to 8123
