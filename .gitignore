@@ -64,3 +64,4 @@ target/
 #Bazaar
 .bzr/
 
+.idea/
